@@ -1,0 +1,29 @@
+- description: composition:ddd-readable-testing
+  prompts:
+    - compose-skills
+  vars:
+    skill_catalog: file://skill-catalog.md
+    project_instructions: |
+      This project explicitly uses Domain-Driven Design (DDD).
+      ASP.NET Core endpoints are input adapters, application services own workflows,
+      and provider configuration belongs to infrastructure.
+    task: |
+      Restructure a task-returning ASP.NET Core endpoint so it validates request shape,
+      translates the web DTO into a purpose-named application input, and keeps payment-provider
+      options and wiring in infrastructure. Add focused application unit tests and an endpoint
+      integration test. No logging or exception policy changes are requested.
+  assert:
+    - type: icontains
+      value: 'Primary skill: `dotnet-ddd-architecture`'
+    - type: regex
+      value: 'Secondary skills:.*`csharp-readable-code`'
+    - type: regex
+      value: 'Secondary skills:.*`dotnet-testing`'
+    - type: not-regex
+      value: 'Secondary skills:.*`(dotnet-clean-architecture|dotnet-domain-clarification|dotnet-logging-exceptions|maui-)'
+    - type: llm-rubric
+      value: 'Pass only if the explicitly activated dotnet-ddd-architecture skill is primary because the requested outcome is a DDD-governed boundary change. csharp-readable-code and dotnet-testing must be secondary for the changed task-returning C# API and requested tests; no unactivated or unrelated skill may be selected.'
+  metadata:
+    id: composition:ddd-readable-testing
+    skill: skill-routing
+    kind: compose

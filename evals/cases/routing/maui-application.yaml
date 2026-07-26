@@ -1,0 +1,20 @@
+- description: routing:maui-application
+  prompts:
+    - route-skill
+  vars:
+    skill_catalog: file://skill-catalog.md
+    task: |
+      Change a .NET MAUI page and ViewModel so a command's availability is bound,
+      a DataTemplate uses compiled bindings, and navigation is awaited through an injected service.
+      No tests are requested.
+  assert:
+    - type: icontains
+      value: 'Primary skill: `maui-application`'
+    - type: not-regex
+      value: 'Primary skill: `maui-ui-testing`'
+    - type: llm-rubric
+      value: 'Pass only if maui-application is the single primary skill because the task concerns MAUI View/ViewModel, binding, command, and navigation implementation rather than UI automation.'
+  metadata:
+    id: routing:maui-application
+    skill: skill-routing
+    kind: route

@@ -1,0 +1,4 @@
+interface:
+  display_name: ".NET Logging and Exceptions"
+  short_description: "Logging safety and exception boundary rules"
+  default_prompt: "Use $dotnet-logging-exceptions to review logging and exception handling in this .NET change."

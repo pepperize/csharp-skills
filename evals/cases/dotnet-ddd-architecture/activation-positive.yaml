@@ -1,0 +1,46 @@
+- description: dotnet-ddd-architecture:activation-positive
+  prompts:
+    - apply-skill
+  vars:
+    skill: file://../dotnet-ddd-architecture/SKILL.md
+    project_instructions: |
+      This project explicitly uses Domain-Driven Design (DDD).
+      ASP.NET Core endpoints are input adapters, application services own workflows,
+      and third-party provider configuration belongs to infrastructure.
+    task: |
+      Recommend the placement and API shape for this POST endpoint. It must reject malformed
+      request shapes, translate valid web input for the application service, and obtain payment
+      provider configuration without leaking framework configuration into the application layer.
+    code: |
+      public sealed class OrdersController(
+          OrderApplicationService service,
+          IConfiguration configuration)
+      {
+          public async Task<IResult> Create(
+              string? customerId,
+              string? guestEmail)
+          {
+              var apiKey = configuration["Payments:ApiKey"];
+              var order = await service.Create(customerId, guestEmail, apiKey);
+              return Results.Ok(order);
+          }
+      }
+  assert:
+    - type: regex
+      value: '[Aa]ctivat|explicitly uses|apply'
+    - type: regex
+      value: '[Ii]nput (adapter|boundary)|endpoint.*validat|request shape'
+    - type: regex
+      value: '(purpose-named|application) (input|command)|translate|map'
+    - type: regex
+      value: '[Ii]nfrastructure|composition (root|boundary)'
+    - type: regex
+      value: 'Payment(s|Provider)?Options|typed.*options|options.*type'
+    - type: regex
+      value: 'CreateAsync'
+    - type: llm-rubric
+      value: 'Pass only if the explicitly activated DDD guidance is applied: malformed HTTP request shape is handled at the input adapter, valid web input is translated into a purpose-named application input, payment configuration is represented by focused typed options and kept in infrastructure/composition wiring, and the project-owned task-returning operation uses an Async suffix. It must not invent an aggregate or domain exception for malformed HTTP input.'
+  metadata:
+    id: dotnet-ddd-architecture:activation-positive
+    skill: dotnet-ddd-architecture
+    kind: apply

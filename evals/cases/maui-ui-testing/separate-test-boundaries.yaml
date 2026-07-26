@@ -1,0 +1,27 @@
+- description: maui-ui-testing:separate-test-boundaries
+  prompts:
+    - apply-skill
+  vars:
+    skill: file://../maui-ui-testing/SKILL.md
+    project_instructions: |
+      This is a new .NET MAUI application with no existing UI automation stack.
+    task: |
+      Place coverage for two behaviors:
+      1. LoginViewModel sets IsBusy and disables SubmitCommand while authentication is pending.
+      2. On Android, tapping the login button navigates the running app to a welcome page.
+      Explain which test project and test kind owns each behavior.
+  assert:
+    - type: regex
+      value: '[Vv]iew[Mm]odel.*unit|unit.*[Vv]iew[Mm]odel'
+    - type: icontains
+      value: Appium
+    - type: regex
+      value: '[Ss]eparate (project|test project)|projects separate'
+    - type: regex
+      value: 'AutomationId|tap|running app'
+    - type: llm-rubric
+      value: 'Pass only if ViewModel state/command behavior is assigned to ordinary unit tests, the real Android tap/navigation is assigned to Appium UI automation using stable element identification, and UI automation is kept in a separate project.'
+  metadata:
+    id: maui-ui-testing:separate-test-boundaries
+    skill: maui-ui-testing
+    kind: apply

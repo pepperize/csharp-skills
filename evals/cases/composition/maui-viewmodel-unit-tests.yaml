@@ -1,0 +1,27 @@
+- description: composition:maui-viewmodel-unit-tests
+  prompts:
+    - compose-skills
+  vars:
+    skill_catalog: file://skill-catalog.md
+    project_instructions: |
+      This is a .NET MAUI application whose ordinary unit-test project uses NUnit.
+      The project instructions do not activate Clean Architecture or DDD.
+    task: |
+      Change LoginViewModel so IsBusy and command availability remain coherent while an
+      asynchronous login is pending, then add ordinary NUnit unit tests for those state
+      transitions. Do not launch the app, inspect controls, or use a device or emulator.
+  assert:
+    - type: icontains
+      value: 'Primary skill: `maui-application`'
+    - type: regex
+      value: 'Secondary skills:.*`csharp-readable-code`'
+    - type: regex
+      value: 'Secondary skills:.*`dotnet-testing`'
+    - type: not-regex
+      value: '(Primary|Secondary) skill(s)?:.*`maui-ui-testing`'
+    - type: llm-rubric
+      value: 'Pass only if maui-application is primary because the main production change is MAUI ViewModel presentation behavior. csharp-readable-code and dotnet-testing must be secondary, and maui-ui-testing must be excluded because the requested tests are ordinary ViewModel unit tests with no running UI.'
+  metadata:
+    id: composition:maui-viewmodel-unit-tests
+    skill: skill-routing
+    kind: compose

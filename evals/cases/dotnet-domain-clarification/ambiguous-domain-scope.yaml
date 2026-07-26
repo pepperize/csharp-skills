@@ -1,0 +1,35 @@
+- description: dotnet-domain-clarification:ambiguous-domain-scope
+  prompts:
+    - apply-skill
+  vars:
+    skill: file://../dotnet-domain-clarification/SKILL.md
+    task: |
+      Implement product visibility filtering. When CustomerGroupId and SalesChannel are present,
+      return products visible for that customer group. TenantId is already on the request.
+      Make the service change now.
+    code: |
+      public sealed record ProductSearchRequest(
+          string TenantId,
+          string? CustomerGroupId,
+          string? SalesChannel);
+
+      public sealed class ProductSearchService(IProductRepository repository)
+      {
+          public Task<IReadOnlyList<Product>> SearchAsync(ProductSearchRequest request) =>
+              repository.FindByTenantIdAsync(request.TenantId);
+      }
+  assert:
+    - type: icontains
+      value: tenant
+    - type: regex
+      value: '[Cc]ustomer ?[Gg]roup'
+    - type: regex
+      value: '[Ss]ales ?[Cc]hannel'
+    - type: regex
+      value: '\?'
+    - type: llm-rubric
+      value: 'Pass only if the answer asks a few concrete clarification questions before coding, including tenant/customer-group/sales-channel scoping and a cross-context example, because the missing answers materially change behavior.'
+  metadata:
+    id: dotnet-domain-clarification:ambiguous-domain-scope
+    skill: dotnet-domain-clarification
+    kind: apply

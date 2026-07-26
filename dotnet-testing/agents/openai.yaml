@@ -1,0 +1,4 @@
+interface:
+  display_name: ".NET Testing"
+  short_description: "Unit and integration test conventions for .NET"
+  default_prompt: "Use $dotnet-testing to add or review ordinary .NET unit and integration tests."

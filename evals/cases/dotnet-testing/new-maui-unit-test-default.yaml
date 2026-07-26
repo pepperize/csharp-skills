@@ -1,0 +1,24 @@
+- description: dotnet-testing:new-maui-unit-test-default
+  prompts:
+    - apply-skill
+  vars:
+    skill: file://../dotnet-testing/SKILL.md
+    project_instructions: |
+      This is a new .NET MAUI project. No test framework, mocking library, or assertion library
+      has been selected, and there are no additional project instructions.
+    task: |
+      Choose the default framework and outline an ordinary unit test for a pure LoginViewModel
+      state transition. The test does not launch or interact with a running app.
+  assert:
+    - type: icontains
+      value: NUnit
+    - type: regex
+      value: '[Uu]nit test'
+    - type: not-regex
+      value: 'Substitute\.For|new Mock<|\.Should\(|AppiumOptions|AndroidDriver'
+    - type: llm-rubric
+      value: 'Pass only if NUnit is chosen as the default ordinary unit-test framework for the new MAUI project, no mocking/assertion package is invented, and the ViewModel test remains outside UI automation.'
+  metadata:
+    id: dotnet-testing:new-maui-unit-test-default
+    skill: dotnet-testing
+    kind: apply

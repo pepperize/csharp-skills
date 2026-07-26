@@ -1,0 +1,37 @@
+- description: maui-application:compiled-binding-types
+  prompts:
+    - review-code
+  vars:
+    skill: file://../maui-application/SKILL.md
+    task: |
+      Correct the compiled-binding types for the page and its item template. OrderPageViewModel
+      exposes IReadOnlyList<OrderItemViewModel> Items. Do not silence compiler warnings.
+    code: |
+      <ContentPage
+          x:Class="Shop.OrderPage"
+          xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+          xmlns:vm="clr-namespace:Shop.ViewModels"
+          x:DataType="vm:OrderPageViewModel">
+          <CollectionView ItemsSource="{Binding Items}">
+              <CollectionView.ItemTemplate>
+                  <DataTemplate x:DataType="x:Object">
+                      <Label Text="{Binding ProductName}" />
+                  </DataTemplate>
+              </CollectionView.ItemTemplate>
+          </CollectionView>
+      </ContentPage>
+  assert:
+    - type: icontains
+      value: x:DataType
+    - type: icontains
+      value: OrderPageViewModel
+    - type: icontains
+      value: OrderItemViewModel
+    - type: regex
+      value: '[Dd]ata[Tt]emplate|template'
+    - type: llm-rubric
+      value: 'Pass only if the corrected XAML keeps the page x:DataType as OrderPageViewModel, gives the DataTemplate its actual OrderItemViewModel x:DataType, and explicitly rejects x:Object as a warning-suppression workaround.'
+  metadata:
+    id: maui-application:compiled-binding-types
+    skill: maui-application
+    kind: review

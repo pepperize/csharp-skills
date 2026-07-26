@@ -1,0 +1,35 @@
+- description: dotnet-clean-architecture:activation-positive
+  prompts:
+    - apply-skill
+  vars:
+    skill: file://../dotnet-clean-architecture/SKILL.md
+    project_instructions: |
+      This project explicitly uses Clean Architecture.
+      Application code owns use cases and ports; infrastructure owns adapters.
+    task: |
+      Recommend the boundary for a CreateInvoice workflow that calls a payment provider.
+      The endpoint already maps HTTP input into CreateInvoiceCommand.
+    code: |
+      public sealed class InvoiceController(PaymentSdk sdk)
+      {
+          public async Task<IResult> CreateAsync(CreateInvoiceCommand command)
+          {
+              var response = await sdk.ChargeAsync(command.Amount);
+              return Results.Ok(new Invoice(response.Id));
+          }
+      }
+  assert:
+    - type: regex
+      value: '[Uu]se ?[Cc]ase'
+    - type: regex
+      value: '[Pp]ort'
+    - type: regex
+      value: '[Aa]dapter'
+    - type: regex
+      value: '[Ii]nject|constructor'
+    - type: llm-rubric
+      value: 'Pass only if the answer applies the explicitly activated Clean Architecture boundaries: endpoint maps input, an application use case orchestrates through an injected port, and infrastructure contains the payment SDK adapter.'
+  metadata:
+    id: dotnet-clean-architecture:activation-positive
+    skill: dotnet-clean-architecture
+    kind: apply

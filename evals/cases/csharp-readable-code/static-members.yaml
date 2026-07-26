@@ -1,0 +1,39 @@
+- description: csharp-readable-code:static-members
+  prompts:
+    - review-code
+  vars:
+    skill: file://../csharp-readable-code/SKILL.md
+    task: |
+      Review the project-owned static methods and the external static call. Recommend corrections
+      consistent with the skill and explain which static call may remain direct.
+    code: |
+      public static class InvoiceHelpers
+      {
+          public static decimal AddTax(decimal amount, decimal rate) =>
+              amount + amount * rate;
+
+          public static Invoice LoadLatest() =>
+              ServiceLocator.Current.GetRequiredService<IInvoiceRepository>().LoadLatest();
+      }
+
+      public sealed class InvoiceCalculator
+      {
+          public decimal Normalize(decimal amount) => Math.Abs(amount);
+      }
+  assert:
+    - type: regex
+      value: '[Hh]ard.?coupl|concrete implementation|ordinary (proxy-based )?mock|London-style'
+    - type: regex
+      value: '[Dd]irect expression|[Ii]nstance collaborator|[Cc]onstructor'
+    - type: regex
+      value: '[Ss]ervice [Ll]ocator|[Ss]tatic access|[Ii]nject'
+    - type: regex
+      value: 'Math\.Abs|external static'
+    - type: not-regex
+      value: '[Ii]nherently untestable'
+    - type: llm-rubric
+      value: 'Pass only if the review removes both project-owned static methods because they hard-code concrete behavior that ordinary mocking frameworks cannot replace or verify for London-style isolation, replaces the pure AddTax helper with a direct expression or instance collaborator, prohibits ambient ServiceLocator access in favor of injection, and allows the stable pure external Math.Abs call to remain direct. It must not describe static methods as inherently untestable.'
+  metadata:
+    id: csharp-readable-code:static-members
+    skill: csharp-readable-code
+    kind: review

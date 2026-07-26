@@ -1,0 +1,29 @@
+- description: dotnet-ddd-architecture:activation-guard-negative
+  prompts:
+    - apply-skill
+  vars:
+    skill: file://../dotnet-ddd-architecture/SKILL.md
+    project_instructions: |
+      This project has Domain, Application, and Infrastructure folders.
+      The main instructions do not state that DDD or Domain-Driven Design is used.
+    task: |
+      Move validation into an Order aggregate and introduce a CustomerId value object
+      because the existing folders look domain-driven. Apply the skill if active.
+    code: |
+      public sealed class OrderService
+      {
+          public Order Create(string customerId) => new(customerId);
+      }
+  assert:
+    - type: regex
+      value: '[Nn]ot activated|[Nn]ot active|[Dd]o not apply|[Mm]ust not apply|[Ss]hould not apply'
+    - type: regex
+      value: 'DDD|Domain-Driven Design'
+    - type: not-regex
+      value: '(^|\n)\s*(public\s+)?(sealed\s+)?(class|record|struct)\s+(OrderAggregate|CustomerId)\b'
+    - type: llm-rubric
+      value: 'Pass only if the answer refuses to infer DDD activation from folder names and does not introduce aggregates or value objects speculatively.'
+  metadata:
+    id: dotnet-ddd-architecture:activation-guard-negative
+    skill: dotnet-ddd-architecture
+    kind: apply

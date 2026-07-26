@@ -1,0 +1,4 @@
+interface:
+  display_name: ".NET DDD Architecture"
+  short_description: "Guarded DDD architecture guidance for .NET"
+  default_prompt: "Use $dotnet-ddd-architecture to guide this change only if the project instructions explicitly activate DDD."

@@ -1,0 +1,4 @@
+interface:
+  display_name: ".NET MAUI Application"
+  short_description: "Views, ViewModels, bindings, navigation, and platforms"
+  default_prompt: "Use $maui-application to implement or review this .NET MAUI View, ViewModel, binding, navigation, or platform change."

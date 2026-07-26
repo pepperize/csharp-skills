@@ -1,0 +1,35 @@
+- description: dotnet-logging-exceptions:broad-catch-and-unsafe-log
+  prompts:
+    - review-code
+  vars:
+    skill: file://../dotnet-logging-exceptions/SKILL.md
+    task: |
+      Review the catch boundary, log statement, and fallback result. The query is untrusted request data.
+    code: |
+      public async Task<IReadOnlyList<Product>> SearchAsync(string query)
+      {
+          try
+          {
+              return await client.SearchAsync(query);
+          }
+          catch (Exception exception)
+          {
+              logger.LogError($"Search failed for {query}: {exception.Message}");
+              return [];
+          }
+      }
+  assert:
+    - type: regex
+      value: '[Bb]road.*Exception|catch.*Exception'
+    - type: regex
+      value: '[Ss]tructured|message template'
+    - type: regex
+      value: '[Oo]mit|[Rr]edact|[Nn]eutraliz|control character|unsafe|untrusted'
+    - type: regex
+      value: '[Dd]o not.*empty|[Hh]ide.*failure|[Ll]et.*propagate|specific recoverable'
+    - type: llm-rubric
+      value: 'Pass only if the review rejects the broad catch-and-empty fallback, requires a specifically owned recoverable failure or propagation, uses the ILogger exception overload only if the sink may retain exception details, and omits the unclassified query rather than inventing a sanitizer. It must still prefer a structured message template for safe fields.'
+  metadata:
+    id: dotnet-logging-exceptions:broad-catch-and-unsafe-log
+    skill: dotnet-logging-exceptions
+    kind: review

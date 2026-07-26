@@ -1,0 +1,33 @@
+description: Behavioral evals for C#/.NET/MAUI agent skills using Codex login
+
+env:
+  CODEX_MODEL: "{{ env.PROMPTFOO_CODEX_MODEL | default('gpt-5.5', true) }}"
+
+prompts:
+  - id: file://prompts/apply-skill.md
+    label: apply-skill
+  - id: file://prompts/compose-skills.md
+    label: compose-skills
+  - id: file://prompts/review-code.md
+    label: review-code
+  - id: file://prompts/route-skill.md
+    label: route-skill
+
+providers:
+  - id: openai:codex-sdk
+    config: &codex_config
+      working_dir: ..
+      model: "{{ env.CODEX_MODEL }}"
+      sandbox_mode: read-only
+      approval_policy: never
+      network_access_enabled: false
+      web_search_enabled: false
+
+defaultTest:
+  options:
+    provider:
+      id: openai:codex-sdk
+      config: *codex_config
+
+tests:
+  - file://cases/**/*.yaml

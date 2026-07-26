@@ -1,0 +1,4 @@
+interface:
+  display_name: "C# Readable Code"
+  short_description: "C# naming, nullability, and readability rules"
+  default_prompt: "Use $csharp-readable-code to review this C# change for naming, nullability, static members, and readability."

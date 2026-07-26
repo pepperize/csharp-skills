@@ -1,0 +1,4 @@
+interface:
+  display_name: ".NET Clean Architecture"
+  short_description: "Guarded Clean Architecture guidance for .NET"
+  default_prompt: "Use $dotnet-clean-architecture to guide this change only if the project instructions explicitly activate Clean Architecture."

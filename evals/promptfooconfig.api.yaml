@@ -1,0 +1,29 @@
+description: Behavioral evals for C#/.NET/MAUI agent skills using the OpenAI API
+
+env:
+  EVAL_PROVIDER: "{{ env.PROMPTFOO_EVAL_PROVIDER | default('openai:responses:gpt-5.5', true) }}"
+  GRADER_PROVIDER: "{{ env.PROMPTFOO_GRADER_PROVIDER | default(env.PROMPTFOO_EVAL_PROVIDER | default('openai:responses:gpt-5.5', true), true) }}"
+
+prompts:
+  - id: file://prompts/apply-skill.md
+    label: apply-skill
+  - id: file://prompts/compose-skills.md
+    label: compose-skills
+  - id: file://prompts/review-code.md
+    label: review-code
+  - id: file://prompts/route-skill.md
+    label: route-skill
+
+providers:
+  - id: "{{ env.EVAL_PROVIDER }}"
+    config: &api_config
+      max_output_tokens: 1800
+
+defaultTest:
+  options:
+    provider:
+      id: "{{ env.GRADER_PROVIDER }}"
+      config: *api_config
+
+tests:
+  - file://cases/**/*.yaml

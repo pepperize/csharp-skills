@@ -1,0 +1,19 @@
+- description: routing:maui-ui-testing
+  prompts:
+    - route-skill
+  vars:
+    skill_catalog: file://skill-catalog.md
+    task: |
+      Add an Appium test that launches the installed Android MAUI app, taps the
+      checkout button by AutomationId, navigates, and verifies the visible confirmation.
+  assert:
+    - type: icontains
+      value: 'Primary skill: `maui-ui-testing`'
+    - type: not-regex
+      value: 'Primary skill: `(dotnet-testing|maui-application)`'
+    - type: llm-rubric
+      value: 'Pass only if maui-ui-testing is the single primary skill because the request exercises a running MAUI UI through Appium.'
+  metadata:
+    id: routing:maui-ui-testing
+    skill: skill-routing
+    kind: route

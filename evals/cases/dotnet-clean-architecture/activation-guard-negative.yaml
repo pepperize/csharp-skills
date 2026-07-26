@@ -1,0 +1,30 @@
+- description: dotnet-clean-architecture:activation-guard-negative
+  prompts:
+    - apply-skill
+  vars:
+    skill: file://../dotnet-clean-architecture/SKILL.md
+    project_instructions: |
+      This ASP.NET Core project uses controllers, services, and Entity Framework Core repositories.
+      The main project instructions do not state that Clean Architecture is used.
+    task: |
+      Refactor OrderService by introducing CreateOrderUseCase, IOrderPort, and OrderAdapter.
+      Apply the architecture skill if it is active.
+    code: |
+      public sealed class OrderService(IOrderRepository repository)
+      {
+          public Task<Order> CreateAsync(CreateOrderRequest request) =>
+              repository.SaveAsync(Order.From(request));
+      }
+  assert:
+    - type: regex
+      value: '[Nn]ot activated|[Nn]ot active|[Dd]o not apply|[Mm]ust not apply|[Ss]hould not apply'
+    - type: icontains
+      value: Clean Architecture
+    - type: not-regex
+      value: '(^|\n)\s*(public\s+)?(sealed\s+)?(class|interface)\s+\w*(UseCase|Port|Adapter)\b'
+    - type: llm-rubric
+      value: 'Pass only if the answer says the skill is inactive because the main project instructions do not explicitly state Clean Architecture and avoids introducing use cases, ports, or adapters.'
+  metadata:
+    id: dotnet-clean-architecture:activation-guard-negative
+    skill: dotnet-clean-architecture
+    kind: apply

@@ -1,0 +1,35 @@
+- description: dotnet-logging-exceptions:sensitive-data-and-log-injection
+  prompts:
+    - review-code
+  vars:
+    skill: file://../dotnet-logging-exceptions/SKILL.md
+    project_instructions: |
+      The project has no approved data-classification or redaction mechanism.
+      SupportAgentNote is operationally necessary and may be logged only after CR, LF, other
+      control characters, and sink delimiters are neutralized and its value is limited to 200
+      characters.
+    task: |
+      Review this log statement. Email is personal data, accessToken is a secret, ReturnUrl can
+      contain a query and fragment, and SupportAgentNote is attacker-controlled.
+    code: |
+      logger.LogWarning(
+          $"Rejected login for {request.Email} using {accessToken} at {request.ReturnUrl}: {supportAgentNote}");
+  assert:
+    - type: regex
+      value: '[Oo]mit.*(access token|accessToken)|[Nn]ever log.*(access token|accessToken)|secret'
+    - type: regex
+      value: '[Oo]mit.*(email|personal)|no approved.*redact|ask.*policy'
+    - type: regex
+      value: '[Oo]mit.*(query|fragment|URL)|allow-listed summary|route template'
+    - type: regex
+      value: '[Ss]tructured|message template'
+    - type: regex
+      value: 'CR|LF|control character|neutraliz'
+    - type: regex
+      value: '200|maximum length|length.?bound'
+    - type: llm-rubric
+      value: 'Pass only if the review removes the plaintext access token, omits the email because no approved redactor exists, omits the raw ReturnUrl query and fragment in favor of an allow-listed summary if needed, replaces interpolation with a structured message template using only safe values, and permits SupportAgentNote only after the project-required control-character and delimiter neutralization and 200-character limit. It must not treat encoding or an ordinary hash as redaction or invent a sanitizer or package.'
+  metadata:
+    id: dotnet-logging-exceptions:sensitive-data-and-log-injection
+    skill: dotnet-logging-exceptions
+    kind: review

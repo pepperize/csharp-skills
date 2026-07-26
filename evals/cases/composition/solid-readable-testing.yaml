@@ -1,0 +1,28 @@
+- description: composition:solid-readable-testing
+  prompts:
+    - compose-skills
+  vars:
+    skill_catalog: file://skill-catalog.md
+    project_instructions: |
+      The existing unit-test project uses xUnit and Moq.
+      The project instructions do not activate Clean Architecture or DDD.
+    task: |
+      Refactor a production InvoiceProcessor whose single method performs unrelated validation,
+      pricing, persistence, and notification work. Give the task-returning operation an idiomatic
+      C# name and add focused unit tests that preserve its behavior. Do not change logging or
+      exception handling.
+  assert:
+    - type: icontains
+      value: 'Primary skill: `dotnet-solid-review`'
+    - type: regex
+      value: 'Secondary skills:.*`csharp-readable-code`'
+    - type: regex
+      value: 'Secondary skills:.*`dotnet-testing`'
+    - type: not-regex
+      value: 'Secondary skills:.*`(dotnet-clean-architecture|dotnet-ddd-architecture|dotnet-logging-exceptions|maui-)'
+    - type: llm-rubric
+      value: 'Pass only if dotnet-solid-review is primary because responsibility-focused refactoring is the main outcome, while csharp-readable-code and dotnet-testing are secondary checklists for the changed production API and requested behavior-preserving tests. No architecture, logging, or MAUI skill may be selected.'
+  metadata:
+    id: composition:solid-readable-testing
+    skill: skill-routing
+    kind: compose

@@ -1,0 +1,47 @@
+- description: dotnet-solid-review:mixed-responsibilities
+  prompts:
+    - review-code
+  vars:
+    skill: file://../dotnet-solid-review/SKILL.md
+    task: |
+      Review the production design for concrete responsibility and SOLID risks.
+      Preserve externally visible behavior and recommend the smallest practical refactor.
+    code: |
+      public sealed class ReportExporter(
+          ReportingDbContext database,
+          HttpClient deliveryClient)
+      {
+          public async Task ExportAsync(DateOnly day)
+          {
+              var rows = await database.Orders
+                  .Where(order => order.CreatedOn == day)
+                  .ToListAsync();
+
+              var csv = string.Join(
+                  Environment.NewLine,
+                  rows.Select(order => $"{order.Id},{order.Total}"));
+
+              await deliveryClient.PostAsync(
+                  "/reports",
+                  new StringContent(csv));
+          }
+      }
+  assert:
+    - type: regex
+      value: '[Mm]ix|multiple|more than one|responsibil'
+    - type: regex
+      value: '[Qq]uer(y|ying)|persistence|database'
+    - type: regex
+      value: 'CSV|format|transform'
+    - type: regex
+      value: '[Dd]eliver|HTTP|client|transport'
+    - type: regex
+      value: '[Ee]xtract|collaborator|split'
+    - type: regex
+      value: '[Ff]ocused test|characterization|unit test|test.*behavior'
+    - type: llm-rubric
+      value: 'Pass only if the review identifies the real change and testability risk from mixing query/persistence, CSV transformation, and HTTP delivery, then recommends a small behavior-preserving extraction or vertical refactor with focused test impact. It must treat SOLID as a heuristic, avoid a wholesale architecture rewrite, and avoid adding an interface for every class merely to satisfy a principle.'
+  metadata:
+    id: dotnet-solid-review:mixed-responsibilities
+    skill: dotnet-solid-review
+    kind: review

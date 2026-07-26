@@ -1,0 +1,4 @@
+interface:
+  display_name: ".NET Domain Clarification"
+  short_description: "Clarify ambiguous domain-sensitive changes"
+  default_prompt: "Use $dotnet-domain-clarification to identify the domain questions that must be answered before coding."

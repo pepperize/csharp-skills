@@ -1,0 +1,4 @@
+interface:
+  display_name: ".NET MAUI UI Testing"
+  short_description: "Appium UI testing for .NET MAUI applications"
+  default_prompt: "Use $maui-ui-testing to add or review device or emulator UI automation for this .NET MAUI app."

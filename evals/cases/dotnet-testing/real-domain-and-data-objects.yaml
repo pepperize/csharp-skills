@@ -1,0 +1,55 @@
+- description: dotnet-testing:real-domain-and-data-objects
+  prompts:
+    - apply-skill
+  vars:
+    skill: file://../dotnet-testing/SKILL.md
+    project_instructions: |
+      The existing test project uses xUnit, Moq, and direct xUnit assertions.
+    task: |
+      Outline a London-style unit test for CheckoutService.CheckoutAsync. Explain which
+      constructor arguments and method values should be real and which should be mocked.
+    code: |
+      public sealed record CheckoutRequest(string CustomerId, decimal Amount);
+
+      public sealed record CheckoutOptions(decimal TaxRate);
+
+      public sealed class Order(string customerId, decimal total)
+      {
+          public string CustomerId { get; } = customerId;
+          public decimal Total { get; } = total;
+      }
+
+      public sealed class CheckoutService(
+          IOrderRepository orders,
+          IPaymentGateway gateway,
+          CheckoutOptions options)
+      {
+          public async Task<Order> CheckoutAsync(CheckoutRequest request)
+          {
+              var order = new Order(
+                  request.CustomerId,
+                  request.Amount * (1 + options.TaxRate));
+              await gateway.ChargeAsync(order.Total);
+              await orders.SaveAsync(order);
+              return order;
+          }
+      }
+  assert:
+    - type: regex
+      value: 'new CheckoutRequest|real (CheckoutRequest|request|DTO)'
+    - type: regex
+      value: 'new CheckoutOptions|real (CheckoutOptions|options|configuration)'
+    - type: regex
+      value: 'real (Order|entity|domain object)|new Order'
+    - type: regex
+      value: 'Mock<IOrderRepository>|mock(ed)? (repository|orders)'
+    - type: regex
+      value: 'Mock<IPaymentGateway>|mock(ed)? (gateway|payment)'
+    - type: not-regex
+      value: 'Mock<(Order|CheckoutRequest|CheckoutOptions)>'
+    - type: llm-rubric
+      value: 'Pass only if the response uses real CheckoutRequest, CheckoutOptions, and Order instances, does not mock domain state or data carriers, and mocks the repository and payment gateway as behavioral outbound collaborators whose responses or interactions the test controls or verifies.'
+  metadata:
+    id: dotnet-testing:real-domain-and-data-objects
+    skill: dotnet-testing
+    kind: apply

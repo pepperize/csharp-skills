@@ -1,0 +1,37 @@
+- description: dotnet-testing:preserve-existing-frameworks
+  prompts:
+    - apply-skill
+  vars:
+    skill: file://../dotnet-testing/SKILL.md
+    project_instructions: |
+      The existing test project uses xUnit, Moq, and xUnit Assert methods.
+      It does not reference NUnit, NSubstitute, FluentAssertions, or Shouldly.
+    task: |
+      Add a unit test for CheckoutService.PlaceOrderAsync. Verify that the gateway is called once
+      and that the returned order id is the observed value.
+    code: |
+      public sealed class CheckoutService(IPaymentGateway gateway)
+      {
+          public async Task<string> PlaceOrderAsync(decimal amount)
+          {
+              var receipt = await gateway.ChargeAsync(amount);
+              return receipt.OrderId;
+          }
+      }
+  assert:
+    - type: regex
+      value: '\[Fact\]|xUnit'
+    - type: regex
+      value: 'Mock<IPaymentGateway>|Moq'
+    - type: regex
+      value: 'Given\w+_Should\w+Async'
+    - type: regex
+      value: '\bactual\b'
+    - type: not-regex
+      value: '\[Test\]|Substitute\.For|\.Should\('
+    - type: llm-rubric
+      value: 'Pass only if the test preserves xUnit, Moq, and direct xUnit assertions; uses Given{Condition}_Should{ExpectedResult}Async naming; calls the observed value actual; and verifies the gateway interaction without adding packages.'
+  metadata:
+    id: dotnet-testing:preserve-existing-frameworks
+    skill: dotnet-testing
+    kind: apply

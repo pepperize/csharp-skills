@@ -1,0 +1,31 @@
+- description: csharp-readable-code:nullability-and-results
+  prompts:
+    - apply-skill
+  vars:
+    skill: file://../csharp-readable-code/SKILL.md
+    task: |
+      Recommend idiomatic result shapes for these four APIs without hiding failures:
+      1. A synchronous cache lookup where callers branch on whether an item exists.
+      2. An async reservation operation with expected rejection codes and validation details.
+      3. A search with no matching items.
+      4. A nullable Region parameter that switches between local and global search modes.
+    code: |
+      Item? Find(string key);
+      Task<(bool Success, Reservation? Value)> TryReserveAsync(Request request);
+      Task<IReadOnlyList<Item>?> SearchAsync(Query query);
+      Task<IReadOnlyList<Item>> SearchAsync(string? region);
+  assert:
+    - type: regex
+      value: '\bTry[A-Z]\w*'
+    - type: regex
+      value: '[Ee]xplicit result|[Rr]esult type|purpose-named'
+    - type: regex
+      value: '[Nn]on-null empty|[Ee]mpty collection'
+    - type: regex
+      value: '[Ss]eparate (operations|methods)|purpose-named input'
+    - type: llm-rubric
+      value: 'Pass only if the response maps the cache lookup to a synchronous Try-pattern, the detailed async rejection to a purpose-named explicit result, no matches to a non-null empty collection, and nullable mode selection to separate operations or a purpose-named input.'
+  metadata:
+    id: csharp-readable-code:nullability-and-results
+    skill: csharp-readable-code
+    kind: apply

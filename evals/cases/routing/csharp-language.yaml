@@ -1,0 +1,19 @@
+- description: routing:csharp-language
+  prompts:
+    - route-skill
+  vars:
+    skill_catalog: file://skill-catalog.md
+    task: |
+      Review a production C# API whose task-returning method is named load,
+      whose state accessor is GetStatus(), and whose optional result shape is unclear.
+  assert:
+    - type: icontains
+      value: 'Primary skill: `csharp-readable-code`'
+    - type: not-regex
+      value: 'Primary skill: `(dotnet|maui)-'
+    - type: llm-rubric
+      value: 'Pass only if csharp-readable-code is the single primary skill because this is a language-level naming, property, async, and nullability concern.'
+  metadata:
+    id: routing:csharp-language
+    skill: skill-routing
+    kind: route

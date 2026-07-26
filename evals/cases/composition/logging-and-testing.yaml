@@ -1,0 +1,28 @@
+- description: composition:logging-and-testing
+  prompts:
+    - compose-skills
+  vars:
+    skill_catalog: file://skill-catalog.md
+    project_instructions: |
+      The production project uses ILogger message templates.
+      The existing unit-test project uses xUnit and Moq.
+      No architecture skill is activated.
+    task: |
+      Fix a production payment adapter that catches every Exception, interpolates an untrusted
+      gateway message into a log event, and returns false. Map the documented timeout explicitly,
+      let unexpected failures propagate, and add focused tests for both paths.
+  assert:
+    - type: icontains
+      value: 'Primary skill: `dotnet-logging-exceptions`'
+    - type: regex
+      value: 'Secondary skills:.*`csharp-readable-code`'
+    - type: regex
+      value: 'Secondary skills:.*`dotnet-testing`'
+    - type: not-regex
+      value: 'Secondary skills:.*`(dotnet-clean-architecture|dotnet-ddd-architecture|maui-)'
+    - type: llm-rubric
+      value: 'Pass only if dotnet-logging-exceptions is primary because catch boundaries, safe structured logging, and failure mapping are the main outcome. csharp-readable-code and dotnet-testing must be secondary for changed production C# and the requested focused tests, with no architecture or MAUI skill selected.'
+  metadata:
+    id: composition:logging-and-testing
+    skill: skill-routing
+    kind: compose

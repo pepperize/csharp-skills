@@ -1,0 +1,30 @@
+- description: maui-application:navigation-adapter
+  prompts:
+    - review-code
+  vars:
+    skill: file://../maui-application/SKILL.md
+    task: |
+      Refactor this ViewModel navigation to follow the skill. The project uses Shell routes.
+    code: |
+      public sealed class OrdersViewModel
+      {
+          public void OpenOrder(string id)
+          {
+              _ = Shell.Current.GoToAsync($"order?id={id}");
+          }
+      }
+  assert:
+    - type: regex
+      value: '[Ii]nject|constructor'
+    - type: regex
+      value: '[Nn]avigation (adapter|service)|INavigat'
+    - type: regex
+      value: 'OpenOrderAsync|Navigate\w*Async'
+    - type: regex
+      value: '\bawait\b'
+    - type: llm-rubric
+      value: 'Pass only if the solution removes direct ambient Shell.Current access from the ViewModel, injects a navigation adapter/service that owns Shell route syntax, awaits navigation, and uses Async suffixes on project-owned task-returning methods.'
+  metadata:
+    id: maui-application:navigation-adapter
+    skill: maui-application
+    kind: review
