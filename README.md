@@ -66,6 +66,20 @@ Windows PowerShell:
 
 Set `AGENTS_SKILLS_DIR` to install somewhere other than `$HOME/.agents/skills`.
 
+## Per-Project Instructions
+
+After installing the skills, invoke `dotnet-agent-instructions` from each .NET project repository
+to add the skill routing and final self-review instructions:
+
+```text
+Use $dotnet-agent-instructions to install the .NET skill routing and self-review instructions for
+this project.
+```
+
+The skill preserves existing project instructions and updates the root `AGENTS.md` by default. If
+`AGENTS.md` does not exist but `CLAUDE.md` does, it updates `CLAUDE.md`; otherwise, it creates
+`AGENTS.md`. Name a different instruction file in the request when needed.
+
 ## Testing
 
 Run the deterministic repository validation with:
