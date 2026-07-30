@@ -8,19 +8,21 @@ description: Applies ordinary .NET unit and integration testing conventions. Use
 ## Framework Choice
 
 - Preserve the project's existing test framework, mocking library, assertion style, and fixture conventions.
-- Do not add a mocking or assertion package merely to express a preferred style.
-- For a new .NET MAUI project, use NUnit for ordinary unit tests unless project instructions specify otherwise.
-- Do not infer a default framework for a new non-MAUI .NET project; ask or follow project instructions.
+- Use NUnit and Moq when the project has not established alternatives.
+- Treat explicit project instructions as overrides of these defaults.
+- Add Moq only when a test needs a behavioral collaborator whose response or interaction must be controlled or verified.
+- Do not add a separate assertion package merely to express a preferred style.
 - Keep MAUI UI automation in separate projects under `maui-ui-testing`.
 
 ## Default Heuristics
 
 - Prefer FIRST: fast, isolated, repeatable, self-verifying, and timely.
 - Let one test cover one behavior and ideally have one reason to fail. Multiple assertions are acceptable when they verify the same behavior.
-- Name tests `Given{Condition}_Should{ExpectedResult}`.
+- Name tests `{Method}_Given{Condition}_Should{ExpectedResult}`.
 - Append `Async` when the test method returns `Task` or `ValueTask`.
 - Name the observed value `actual`.
 - Use the existing framework's ordinary assertions. Do not introduce FluentAssertions, Shouldly, or another assertion library unless the project already uses it or the user requests it.
+- When several assertions verify the same behavior, use the existing framework's grouped or aggregate assertion scope so one execution reports all related failures.
 - Keep assertions direct and readable.
 
 ## Unit Tests
@@ -39,6 +41,7 @@ description: Applies ordinary .NET unit and integration testing conventions. Use
 
 ## Test Layout
 
+- Mirror the production project's relative folder and namespace hierarchy in its test project so each subject is easy to locate.
 - Keep inputs, expected values, stubs, and intermediates near the action or assertion that uses them.
 - Keep setup in execution order rather than splitting all values from all stubs.
 - Use blank lines only between major Arrange, Act, and Assert blocks.

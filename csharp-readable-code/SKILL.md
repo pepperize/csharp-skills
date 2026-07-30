@@ -57,6 +57,12 @@ description: Applies language-level C# readability rules. Use when writing, refa
 - Extract non-trivial construction into an injected factory.
 - Remove a helper that merely hides one obvious call unless it enforces an invariant or gives a repeated concept a useful name.
 
+## Data Models And Immutability
+
+- Prefer immutable types for value-like data, metadata, protocol bindings, and other models whose semantics do not require mutation.
+- Establish immutable state through constructor parameters, `init`-only properties, or read-only fields.
+- Do not expose mutable collections or mutable collaborators from an otherwise immutable type.
+
 ## Numeric Types
 
 - Choose a numeric type from the semantic model across the full call chain, not from the first caller's local representation.
@@ -67,6 +73,7 @@ description: Applies language-level C# readability rules. Use when writing, refa
 
 ## Production API Integrity
 
+- Treat project-documented public type and member names and signatures as contracts. Do not rename or relocate them, or change their signatures, as incidental cleanup.
 - After changing a signature or introducing a richer result, inspect production call sites before keeping compatibility members.
 - Do not keep production constructors, methods, fallbacks, flags, or branches that exist only for tests.
 - Keep paired public variants only when a production caller or external contract needs both, and identify that caller.
