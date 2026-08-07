@@ -28,8 +28,11 @@ description: Applies .NET MAUI guidance for Views, ViewModels, compiled bindings
 - Append `Async` to project-owned task-returning operations.
 - Use `INotifyPropertyChanged` or the project's established MVVM base/toolkit for changed bindable properties.
 - Raise change notification only after state is coherent, only when a value changed, and for calculated properties affected by the change.
+- Let a ViewModel that owns child ViewModels aggregate their notifications. Let its parent subscribe once to the aggregate instead of subscribing separately to every child.
+- Coalesce intermediate child notifications during a logical bulk operation such as clear, reset, or replace, then publish the aggregate change after state is coherent.
 - Use `ObservableCollection<T>` when the UI must observe collection mutations. Use an ordinary read-only/list shape when the collection is replaced as a whole.
 - Expose command availability from ViewModel state rather than toggling controls in code-behind.
+- Expose local command eligibility from the ViewModel that owns the relevant state. Let a parent ViewModel combine it with orchestration state such as loading or writing.
 
 ## Bindings
 

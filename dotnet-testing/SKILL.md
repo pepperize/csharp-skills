@@ -38,6 +38,8 @@ description: Applies ordinary .NET unit and integration testing conventions. Use
 - Prefer explicit assertions and interaction verification over failure caused only by a missing stub.
 - In interaction tests, verify the end of the signal path at the relevant boundary. Verify intermediate calls only when the interaction itself is the behavior.
 - Do not mix state and interaction verification for the same behavior in one unit test.
+- After deepening a module, test shared state transitions through its public interface. Keep caller tests focused on caller-specific orchestration and outbound collaboration.
+- Do not preserve tests that reach through a newly encapsulated child object graph merely because the previous implementation exposed it.
 
 ## Test Layout
 

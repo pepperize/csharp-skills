@@ -19,9 +19,10 @@ description: Reviews general .NET production design for responsibilities, SOLID 
 
 1. Identify the required production behavior, root cause, responsibilities, contracts, and boundaries.
 2. Locate the primary responsibility of each affected type and member.
-3. Investigate mixed concerns and hidden assumptions that create real change, testability, or comprehension risk.
-4. Prefer the smallest local or vertical-slice refactor that removes that risk without changing unrelated behavior.
-5. Verify with the narrowest credible scope under `dotnet-testing`.
+3. After extracting a shared type, inspect its callers. If they retain the same loops, filtering, child-event subscriptions, or member traversal, deepen the extracted type or remove it.
+4. Investigate mixed concerns and hidden assumptions that create real change, testability, or comprehension risk.
+5. Prefer the smallest local or vertical-slice refactor that removes that risk without changing unrelated behavior.
+6. Verify with the narrowest credible scope under `dotnet-testing`.
 
 ## SOLID Checks
 
@@ -71,6 +72,8 @@ Investigate these as risks, not proof:
 - Duplicated business knowledge, mappings, protocol rules, or decisions.
 - Primitive obsession around identifiers, money, permissions, status, or other domain concepts.
 - Repeated conditional logic over the same type, state, or capability.
+- Repeated child-event subscriptions, filtering, or bulk-operation loops over the same owned state in multiple callers.
+- Callers that reach through an owning type's child object graph to make decisions that type has enough information to make.
 - Feature envy, collaborator chains, and methods that mix orchestration with calculation, transformation, validation, or business branching.
 - Public methods that hide state changes, expose internals, require callers to ask before acting, or behave differently from their names.
 - Shotgun surgery across unrelated files.
@@ -84,6 +87,7 @@ Investigate these as risks, not proof:
 - Refactor in small verified steps. Add characterization or focused tests before a larger structural change when coverage is inadequate.
 - Prefer rename, extract method, extract collaborator/type, and move method before redesign.
 - Prefer named cohesive collaborators over broad utilities.
+- Prefer telling an owning type to perform a stable operation or answer a purpose-named query over retrieving its children and reproducing the operation in each caller.
 - Use a design pattern only when it simplifies a current problem and matches project language.
 - Remove duplicated knowledge, not merely similar-looking syntax.
 - Wait for evidence before extracting a shared abstraction.

@@ -1,6 +1,6 @@
 ---
 name: csharp-readable-code
-description: Applies language-level C# readability rules. Use when writing, refactoring, or reviewing production C# members, naming, properties, async APIs, nullable reference types, absence/result shapes, guards, factories, numeric types, or static members. Do not use for test style, logging policy, architecture, or MAUI UI concerns.
+description: Applies language-level C# readability rules. Use when writing, refactoring, or reviewing production C# types, abstractions, members, naming, properties, async APIs, nullable reference types, absence/result shapes, guards, factories, numeric types, or static members. Do not use for test style, logging policy, architecture, or MAUI UI concerns.
 ---
 
 # C# Readable Code
@@ -21,6 +21,16 @@ description: Applies language-level C# readability rules. Use when writing, refa
 - Name operations with verb phrases. Do not repeat information already carried by the receiver, containing type, or return type unless it distinguishes variants at the call site.
 - Append `Async` to project-owned methods that return `Task` or `ValueTask`. Preserve a different name only when a framework contract, interface, or override requires it.
 - Classify each new or renamed member as a property, predicate, operation, or construction helper before accepting its name.
+
+## Abstraction Discipline
+
+- Prefer an existing production type when it already represents the data and behavior the caller needs.
+- Introduce a class, interface, wrapper, adapter, or view model only for a current requirement that it uniquely owns: behavior, mutable state, an invariant, or non-trivial translation.
+- Do not introduce a type that merely copies, renames, or forwards members of another type.
+- Do not add members for anticipated future use. Every new production member must serve a current production caller or documented contract.
+- Apply the deletion test: if removing the abstraction leaves callers equally simple and does not duplicate meaningful logic, remove it.
+- Keep stable behavior over child state with the type that owns those children. Move repeated queries, selections, bulk operations, and child-event handling into it when those behaviors are shared across callers.
+- Implement `IEnumerable<T>`, `IReadOnlyList<T>`, or another collection interface only when collection semantics are the type's primary responsibility. Otherwise expose purpose-named queries and operations, and name projections with different ordering explicitly.
 
 ## Static Members
 
@@ -54,7 +64,8 @@ description: Applies language-level C# readability rules. Use when writing, refa
 - When a class mainly creates one product, name it `<Product>Factory`.
 - Name its main instance operation `Create` or `CreateAsync`.
 - Prefer direct construction for a value object or record when a factory would only wrap an obvious constructor or fill one obvious member.
-- Extract non-trivial construction into an injected factory.
+- Treat mutable objects whose lifecycle is wholly owned by the caller as constructed state rather than injectable services. Keep direct construction when the caller supplies runtime state to an object it exclusively owns.
+- Extract construction into an injected factory when creation policy varies, repeats substantial decisions across callers, needs its own test seam, or ownership belongs outside the caller.
 - Remove a helper that merely hides one obvious call unless it enforces an invariant or gives a repeated concept a useful name.
 
 ## Data Models And Immutability
@@ -83,9 +94,13 @@ description: Applies language-level C# readability rules. Use when writing, refa
 
 Before finalizing changed C# production code:
 
-1. Review every new or renamed member against its member category.
-2. Check PascalCase, property usage, predicate phrasing, verb-led operations, and `Async` suffixes.
-3. Review every static member and call; remove introduced project-owned static methods, allow direct stable pure external calls, and put external static I/O, time, randomness, state, context, or services behind an injected boundary.
-4. Check each nullable annotation, empty collection, `Try...` operation, and explicit result against its intended semantics.
-5. Remove helpers that only hide an obvious call.
-6. Reject defensive handling for impossible states.
+1. For every new production type, identify its current production callers and the responsibility it owns that no existing type owns.
+2. Check whether an existing type already satisfies each new type's callers; remove pass-through types and types whose deletion leaves callers equally simple.
+3. For every type that owns child state, inspect callers for repeated loops, filtering, member traversal, or child-event subscriptions that belong behind the type's interface.
+4. Review every implemented collection interface and verify that collection semantics are the type's primary responsibility.
+5. Review every new or renamed member against its member category and verify that each new member serves a current production caller or documented contract.
+6. Check PascalCase, property usage, predicate phrasing, verb-led operations, and `Async` suffixes.
+7. Review every static member and call; remove introduced project-owned static methods, allow direct stable pure external calls, and put external static I/O, time, randomness, state, context, or services behind an injected boundary.
+8. Check each nullable annotation, empty collection, `Try...` operation, and explicit result against its intended semantics.
+9. Remove helpers that only hide an obvious call.
+10. Reject defensive handling for impossible states.

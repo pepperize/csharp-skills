@@ -7,8 +7,9 @@ and .NET MAUI codebases.
 
 ### C#
 
-- `csharp-readable-code`: language-level naming, properties, async suffixes, nullable reference
-  types, absence/result shapes, guards, factories, numeric types, and static-member rules.
+- `csharp-readable-code`: language-level abstraction discipline, naming, properties, async
+  suffixes, nullable reference types, absence/result shapes, guards, factories, numeric types,
+  and static-member rules.
 
 ### .NET
 
