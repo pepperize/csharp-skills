@@ -10,6 +10,8 @@ prompts:
     label: compose-skills
   - id: file://prompts/review-code.md
     label: review-code
+  - id: file://prompts/self-review-code.md
+    label: self-review-code
   - id: file://prompts/route-skill.md
     label: route-skill
 

@@ -1,4 +1,4 @@
 interface:
-  display_name: ".NET SOLID Review"
-  short_description: "Pragmatic SOLID and responsibility review"
-  default_prompt: "Use $dotnet-solid-review to review this .NET design for responsibility, SOLID, and refactoring risks."
+  display_name: ".NET Software Design Review"
+  short_description: "Pragmatic software design principle review"
+  default_prompt: "Use $dotnet-solid-review to review this .NET design with the relevant software design principles and avoid speculative complexity."

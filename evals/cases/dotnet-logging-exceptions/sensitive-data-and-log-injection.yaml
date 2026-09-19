@@ -10,7 +10,9 @@
       characters.
     task: |
       Review this log statement. Email is personal data, accessToken is a secret, ReturnUrl can
-      contain a query and fragment, and SupportAgentNote is attacker-controlled.
+      contain a query and fragment, and SupportAgentNote is attacker-controlled. State every exact
+      condition, including the numeric bound, that applies if SupportAgentNote remains in the log.
+      Do not invent safe-value placeholders when no approved mechanism exists.
     code: |
       logger.LogWarning(
           $"Rejected login for {request.Email} using {accessToken} at {request.ReturnUrl}: {supportAgentNote}");
@@ -20,7 +22,7 @@
     - type: regex
       value: '[Oo]mit.*(email|personal)|no approved.*redact|ask.*policy'
     - type: regex
-      value: '[Oo]mit.*(query|fragment|URL)|allow-listed summary|route template'
+      value: '[Oo]mit.*(query|fragment|URL|ReturnUrl)|(query|fragment|URL|ReturnUrl).*omit|allow-listed (safe )?summary|route template'
     - type: regex
       value: '[Ss]tructured|message template'
     - type: regex

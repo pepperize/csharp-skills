@@ -1,0 +1,45 @@
+- description: dotnet-solid-review:inheritance-substitutability
+  prompts:
+    - review-code
+  vars:
+    skill: file://../dotnet-solid-review/SKILL.md
+    principles: file://../dotnet-solid-review/references/design-principles.md
+    task: |
+      Review this hierarchy. FeedAll accepts every Bird and calls Fly as part of the Bird contract.
+      The penguin reuses Bird only for Name and feeding state.
+    code: |
+      public abstract class Bird
+      {
+          public required string Name { get; init; }
+          public abstract void Fly();
+          public void Feed() { }
+      }
+
+      public sealed class Penguin : Bird
+      {
+          public override void Fly() => throw new NotSupportedException();
+      }
+
+      public static void FeedAll(IEnumerable<Bird> birds)
+      {
+          foreach (var bird in birds)
+          {
+              bird.Fly();
+              bird.Feed();
+          }
+      }
+  assert:
+    - type: regex
+      value: 'LSP|Liskov Substitution Principle'
+    - type: regex
+      value: 'FCoI|Favour Composition over Inheritance'
+    - type: regex
+      value: 'NotSupportedException|substitut|contract'
+    - type: regex
+      value: '[Cc]omposition|capability|IFly|flying'
+    - type: llm-rubric
+      value: 'Pass only if the review names LSP because Penguin cannot honor Bird.Fly and FCoI because inheritance is being used mainly to reuse unrelated state/behavior. It should suggest modeling flying as a separate capability or composing shared behavior while retaining inheritance only for a truly substitutable bird contract.'
+  metadata:
+    id: dotnet-solid-review:inheritance-substitutability
+    skill: dotnet-solid-review
+    kind: review

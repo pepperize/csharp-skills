@@ -40,7 +40,7 @@
     - type: regex
       value: 'new CheckoutOptions|real (CheckoutOptions|options|configuration)'
     - type: regex
-      value: 'real (Order|entity|domain object)|new Order'
+      value: 'real (Order|entity|domain object)|real records[^\n]*Order|Order.?\s*:\s*real|Order.{0,30}real (object|instance)|resulting Order|new Order'
     - type: regex
       value: 'Mock<IOrderRepository>|mock(ed)? (repository|orders)'
     - type: regex

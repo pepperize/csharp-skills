@@ -1,0 +1,47 @@
+- description: dotnet-solid-review:interfaces-and-dependencies
+  prompts:
+    - review-code
+  vars:
+    skill: file://../dotnet-solid-review/SKILL.md
+    principles: file://../dotnet-solid-review/references/design-principles.md
+    task: |
+      Review the production design. ArchiveReportStore is intentionally read-only, and billing
+      policy must be testable without opening SQL connections. Identify only consequential issues.
+    code: |
+      public interface IReportStore
+      {
+          Report Load(Guid id);
+          void Save(Report report);
+          void Delete(Guid id);
+      }
+
+      public sealed class ArchiveReportStore : IReportStore
+      {
+          public Report Load(Guid id) => LoadArchive(id);
+          public void Save(Report report) => throw new NotSupportedException();
+          public void Delete(Guid id) => throw new NotSupportedException();
+      }
+
+      public sealed class BillingService
+      {
+          public decimal Calculate(Guid customerId)
+          {
+              var customer = new SqlCustomerRepository().Load(customerId);
+              return customer.IsLoyal ? 80m : 100m;
+          }
+      }
+  assert:
+    - type: regex
+      value: 'ISP|Interface Segregation Principle'
+    - type: regex
+      value: 'DIP|Dependency Inversion Principle'
+    - type: regex
+      value: '[Rr]ead(er|only)|split.*interface|focused.*interface'
+    - type: regex
+      value: '[Ii]nject|constructor|customer.*(reader|repository)'
+    - type: llm-rubric
+      value: 'Pass only if the review names ISP because the read-only archive must implement unsupported writes, and DIP because high-level billing policy constructs a SQL repository. It should propose caller-focused report capabilities and one meaningful injected customer-reading boundary, without demanding interfaces for every class.'
+  metadata:
+    id: dotnet-solid-review:interfaces-and-dependencies
+    skill: dotnet-solid-review
+    kind: review

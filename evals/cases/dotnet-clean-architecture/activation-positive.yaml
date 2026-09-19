@@ -26,7 +26,7 @@
     - type: regex
       value: '[Aa]dapter'
     - type: regex
-      value: '[Ii]nject|constructor'
+      value: '[Ii]nject|constructor|UseCase\(I\w+Port|Adapter\([^)]*Sdk'
     - type: llm-rubric
       value: 'Pass only if the answer applies the explicitly activated Clean Architecture boundaries: endpoint maps input, an application use case orchestrates through an injected port, and infrastructure contains the payment SDK adapter.'
   metadata:

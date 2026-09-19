@@ -1,0 +1,32 @@
+- description: dotnet-solid-review:duplicated-knowledge
+  prompts:
+    - review-code
+  vars:
+    skill: file://../dotnet-solid-review/SKILL.md
+    principles: file://../dotnet-solid-review/references/design-principles.md
+    task: |
+      Manually review this change. The 100-euro threshold and ten-percent rate are one company-wide
+      volume-discount policy and must always change together. Give only material design findings.
+    code: |
+      public decimal PriceWeb(Order order)
+      {
+          return order.Total >= 100m ? order.Total * 0.9m : order.Total;
+      }
+
+      public decimal PriceStore(Order order)
+      {
+          return order.Total >= 100m ? order.Total * 0.9m : order.Total;
+      }
+  assert:
+    - type: regex
+      value: 'DRY|Don.t Repeat Yourself'
+    - type: regex
+      value: '[Dd]uplicat(ed|ion).*policy|policy.*duplicat(ed|ion)|change.*together|diverge|disagree'
+    - type: regex
+      value: '[Ee]xtract|shared|single.*(policy|method|place)|one purpose-named operation|call it from both|move.*policy.*one'
+    - type: llm-rubric
+      value: 'Pass only if the review explicitly names DRY — Don’t Repeat Yourself, explains that the duplicated company-wide threshold/rate can diverge, and recommends one small named policy or function. It must not emit unrelated principle findings or propose a framework.'
+  metadata:
+    id: dotnet-solid-review:duplicated-knowledge
+    skill: dotnet-solid-review
+    kind: review

@@ -12,18 +12,22 @@ END = "<!-- dotnet-skills:self-review:end -->"
 BLOCK = """<!-- dotnet-skills:self-review:start -->
 ## .NET Skill Routing and Self-Review
 
-For C#, .NET, or .NET MAUI changes, use the applicable skills as checklists. Review the final diff
-against them and fix findings before finalizing.
+For C#, .NET, or .NET MAUI changes, apply the relevant skills while implementing. Review the final
+diff against them and fix meaningful findings before finalizing.
 
 - Clarify uncertain domain behavior first with `dotnet-domain-clarification`.
 - Use `csharp-readable-code` for production C#.
-- Use `dotnet-solid-review` for design, responsibility boundaries, or refactoring.
+- Use `dotnet-solid-review` for non-trivial design or implementation, responsibility boundaries,
+  refactoring, explicit code/design reviews, and final self-review. Read its software-design
+  principle reference and apply only principles relevant to the code.
 - Use `dotnet-testing` for ordinary tests and `maui-ui-testing` for device/emulator UI tests.
 - Use `dotnet-logging-exceptions` when logging or exceptions change.
 - Use `maui-application` for MAUI presentation or platform code.
 - Use `dotnet-clean-architecture` or `dotnet-ddd-architecture` only when the main project
   instructions explicitly activate that architecture.
 - Keep cleanup scoped to the requested change.
+- In self-review findings, name the applicable principle canonically. Do not enumerate principles
+  without a material finding; a clean review may say that none was found.
 <!-- dotnet-skills:self-review:end -->
 """
 

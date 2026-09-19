@@ -8,7 +8,8 @@ description: Applies ordinary .NET unit and integration testing conventions. Use
 ## Framework Choice
 
 - Preserve the project's existing test framework, mocking library, assertion style, and fixture conventions.
-- Use NUnit and Moq when the project has not established alternatives.
+- Use NUnit when the project has not established a test-framework alternative.
+- When a test needs a mocking library and the project has not established one, use Moq.
 - Treat explicit project instructions as overrides of these defaults.
 - Add Moq only when a test needs a behavioral collaborator whose response or interaction must be controlled or verified.
 - Do not add a separate assertion package merely to express a preferred style.

@@ -1,0 +1,47 @@
+- description: dotnet-solid-review:responsibility-boundaries
+  prompts:
+    - review-code
+  vars:
+    skill: file://../dotnet-solid-review/SKILL.md
+    principles: file://../dotnet-solid-review/references/design-principles.md
+    task: |
+      Review this application service. The documented design says application services coordinate
+      report use cases through persistence and delivery ports; SQL and HTTP belong to infrastructure.
+      SQL access, CSV formatting, and HTTP delivery change independently. Decide whether the
+      service's responsibilities, separation of concerns, and alignment with the documented design
+      each create a distinct material consequence. Preserve behavior.
+    code: |
+      namespace Reporting.Application;
+
+      public sealed class DailyReportService
+      {
+          public async Task SendAsync(DateOnly day)
+          {
+              await using var database = new SqlConnection(Settings.ConnectionString);
+              var rows = await database.QueryAsync<OrderRow>(
+                  "select * from orders where day = @day", new { day });
+              var csv = string.Join(Environment.NewLine,
+                  rows.Select(row => $"{row.Id},{row.Total}"));
+              using var client = new HttpClient();
+              await client.PostAsync("/reports", new StringContent(csv));
+          }
+      }
+  assert:
+    - type: regex
+      value: 'SRP|Single Responsibility Principle'
+    - type: regex
+      value: 'SoC|Separation of Concerns'
+    - type: icontains
+      value: 'Implementation Reflects Design'
+    - type: regex
+      value: 'SQL|persistence'
+    - type: regex
+      value: 'HTTP|delivery'
+    - type: regex
+      value: '[Pp]ort|collaborator|adapter|extract'
+    - type: llm-rubric
+      value: 'Pass only if the manual review explicitly names SRP for the class’s multiple reasons to change, SoC for entangled application/persistence/transport concerns, and Implementation Reflects Design because the source bypasses the documented ports. It should recommend a small behavior-preserving coordination service with focused persistence, formatting, and delivery collaborators, not a wholesale architecture rewrite.'
+  metadata:
+    id: dotnet-solid-review:responsibility-boundaries
+    skill: dotnet-solid-review
+    kind: review

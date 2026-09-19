@@ -1,0 +1,48 @@
+- description: dotnet-solid-review:self-review-speculative-design
+  prompts:
+    - self-review-code
+  vars:
+    skill: file://../dotnet-solid-review/SKILL.md
+    principles: file://../dotnet-solid-review/references/design-principles.md
+    task: |
+      Add the one currently required CSV export for DailyReport. No other format, runtime discovery,
+      version negotiation, or fallback behavior is requested.
+    code: |
+      public interface IExportStrategy<TReport, TOptions>
+      {
+          string Version { get; }
+          byte[] Export(TReport report, TOptions options);
+      }
+
+      public sealed class ExportStrategyRegistry
+      {
+          public void Discover(Assembly assembly) { }
+          public void RegisterFallback(int priority, object strategy) { }
+      }
+
+      public sealed class ExportStrategyFactory(ExportStrategyRegistry registry)
+      {
+          public IExportStrategy<TReport, TOptions> Create<TReport, TOptions>(string format) =>
+              throw new NotImplementedException();
+      }
+
+      public sealed class CsvDailyReportStrategy : IExportStrategy<DailyReport, CsvOptions>
+      {
+          public string Version => "1.0";
+          public byte[] Export(DailyReport report, CsvOptions options) => Encoding.UTF8.GetBytes("...");
+      }
+  assert:
+    - type: regex
+      value: 'YAGNI|You Ain.t Gonna Need It'
+    - type: regex
+      value: 'KISS|Keep it simple, stupid'
+    - type: regex
+      value: '[Ss]elf[- ]?[Rr]eview'
+    - type: regex
+      value: '[Rr]emove|delete|replace.*(direct|concrete)|CsvDailyReportExporter'
+    - type: llm-rubric
+      value: 'Pass only if the final self-review catches its own speculative strategy/registry/factory/discovery/version/fallback design, explicitly names YAGNI and KISS, and corrects toward one direct CSV exporter for the current requirement. It must not defend the machinery through OCP or produce an all-principles checklist.'
+  metadata:
+    id: dotnet-solid-review:self-review-speculative-design
+    skill: dotnet-solid-review
+    kind: self-review

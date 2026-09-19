@@ -1,0 +1,43 @@
+- description: dotnet-solid-review:well-designed-relevance
+  prompts:
+    - review-code
+  vars:
+    skill: file://../dotnet-solid-review/SKILL.md
+    principles: file://../dotnet-solid-review/references/design-principles.md
+    task: |
+      Manually review this small design. Apply the principle set only where it produces a material,
+      actionable finding. The order owns this established discount rule and repository persistence
+      is a real external boundary.
+    code: |
+      public sealed class Order
+      {
+          private decimal discount;
+          public decimal Total { get; private set; }
+          public decimal AmountDue => Total - discount;
+
+          public void ApplyVolumeDiscount()
+          {
+              if (Total >= 100m)
+                  discount = Total * 0.10m;
+          }
+      }
+
+      public sealed class CheckoutService(IOrderRepository orders)
+      {
+          public async Task CheckoutAsync(Order order)
+          {
+              order.ApplyVolumeDiscount();
+              await orders.SaveAsync(order);
+          }
+      }
+  assert:
+    - type: regex
+      value: '[Nn]o relevant.*violation|[Nn]o material.*finding|[Nn]o design.*issue|complies'
+    - type: not-regex
+      value: '###.*(DRY|KISS|FCoI|IOSP|SRP|SoC|ISP|DIP|LSP|OCP|LoD|YAGNI)'
+    - type: llm-rubric
+      value: 'Pass only if the manual review says there is no material principle violation, does not manufacture an interface or split the small cohesive methods/classes further, and does not output a checklist or catalog of principles. A brief observation about the design is acceptable, but no false finding is.'
+  metadata:
+    id: dotnet-solid-review:well-designed-relevance
+    skill: dotnet-solid-review
+    kind: review

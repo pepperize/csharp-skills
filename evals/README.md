@@ -5,7 +5,7 @@ The test suite has two layers:
 - Deterministic repository tests validate skill structure, metadata, installation manifests,
   agent-instruction installation, eval inventory, and CI wiring.
 - Promptfoo behavioral evals exercise primary routing, multi-skill composition, activation guards,
-  and high-risk semantic rules.
+  software-design principle detection and restraint, self-review, and high-risk semantic rules.
 
 The deterministic suite runs in CI and has no third-party Python dependencies:
 

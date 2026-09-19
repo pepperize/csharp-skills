@@ -1,0 +1,52 @@
+- description: dotnet-solid-review:encapsulation-and-collaboration
+  prompts:
+    - review-code
+  vars:
+    skill: file://../dotnet-solid-review/SKILL.md
+    principles: file://../dotnet-solid-review/references/design-principles.md
+    task: |
+      Review these members as one change. Order owns its line mutation and discount invariant.
+      GetBalance is expected to be a side-effect-free query. Report each material problem with the
+      canonical principle name, without adding unrelated principles.
+    code: |
+      public sealed class Order
+      {
+          public List<OrderLine> Lines { get; } = [];
+          public OrderStatus Status { get; set; }
+          public decimal Total { get; set; }
+          public decimal Discount { get; set; }
+          public Customer Customer { get; init; }
+      }
+
+      order.Lines.Add(new OrderLine(product, quantity));
+      if (order.Status == OrderStatus.Draft && order.Total > 100m)
+          order.Discount = 0.1m;
+      var countryCode = order.Customer.Address.Country.Code;
+
+      public decimal GetBalance()
+      {
+          account.ApplyMonthlyFee();
+          repository.Save(account);
+          return account.Balance;
+      }
+  assert:
+    - type: icontains
+      value: 'Information Hiding Principle'
+    - type: regex
+      value: 'Tell, Don.{0,4}t Ask'
+    - type: regex
+      value: 'LoD|Law of Demeter'
+    - type: icontains
+      value: 'Principle of Least Astonishment'
+    - type: regex
+      value: '[Mm]utable|Lines|Add'
+    - type: regex
+      value: '[Cc]hain|Customer.*Address.*Country|DestinationCountryCode'
+    - type: regex
+      value: 'GetBalance|side.effect|mutat|query'
+    - type: llm-rubric
+      value: 'Pass only if the review names Information Hiding Principle for the public mutable list/state, Tell, Don’t Ask for the external discount decision, LoD for the customer/address/country chain, and Principle of Least Astonishment for GetBalance mutating and persisting state. Corrections should move owned operations behind purpose-named Order methods/properties and separate the fee command from the balance query.'
+  metadata:
+    id: dotnet-solid-review:encapsulation-and-collaboration
+    skill: dotnet-solid-review
+    kind: review

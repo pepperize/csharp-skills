@@ -4,7 +4,9 @@
   vars:
     skill: file://../dotnet-logging-exceptions/SKILL.md
     task: |
-      Review the catch boundary, log statement, and fallback result. The query is untrusted request data.
+      Review the catch boundary, log statement, and fallback result. The query is untrusted request
+      data, and no project policy classifies or permits it for logging. State any condition that
+      must hold before passing exception details to the logger.
     code: |
       public async Task<IReadOnlyList<Product>> SearchAsync(string query)
       {
@@ -22,7 +24,7 @@
     - type: regex
       value: '[Bb]road.*Exception|catch.*Exception'
     - type: regex
-      value: '[Ss]tructured|message template'
+      value: '[Ss]tructured|message.?template'
     - type: regex
       value: '[Oo]mit|[Rr]edact|[Nn]eutraliz|control character|unsafe|untrusted'
     - type: regex

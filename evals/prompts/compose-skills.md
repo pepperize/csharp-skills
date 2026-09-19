@@ -16,6 +16,8 @@ Choose exactly one primary skill and every applicable secondary skill from the c
 - The primary skill owns the task's main requested outcome or explicitly activated governing boundary.
 - A secondary skill contributes a distinct implementation, safety, or verification checklist to the requested work.
 - Include `csharp-readable-code` when production C# is written, refactored, or reviewed under another primary skill.
+- Include `dotnet-solid-review` when non-trivial production design or an architecture/design review
+  is involved; it supplies general principle reasoning without replacing an activated architecture.
 - Include test, logging, exception, MAUI, and architecture skills only when their trigger is present.
 - Include `dotnet-clean-architecture` or `dotnet-ddd-architecture` only when the project instructions explicitly activate it.
 - Do not list the primary skill again as a secondary skill.

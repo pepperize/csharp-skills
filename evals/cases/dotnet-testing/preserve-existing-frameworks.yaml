@@ -24,13 +24,13 @@
     - type: regex
       value: 'Mock<IPaymentGateway>|Moq'
     - type: regex
-      value: 'Given\w+_Should\w+Async'
+      value: '\w+_Given\w+_Should\w+Async'
     - type: regex
       value: '\bactual\b'
     - type: not-regex
       value: '\[Test\]|Substitute\.For|\.Should\('
     - type: llm-rubric
-      value: 'Pass only if the test preserves xUnit, Moq, and direct xUnit assertions; uses Given{Condition}_Should{ExpectedResult}Async naming; calls the observed value actual; and verifies the gateway interaction without adding packages.'
+      value: 'Pass only if the test preserves xUnit, Moq, and direct xUnit assertions; uses the skill’s {Method}_Given{Condition}_Should{ExpectedResult}Async naming; calls the observed value actual; and verifies the gateway interaction without adding packages.'
   metadata:
     id: dotnet-testing:preserve-existing-frameworks
     skill: dotnet-testing

@@ -16,7 +16,7 @@
     - type: icontains
       value: Appium
     - type: regex
-      value: '[Ss]eparate (project|test project)|projects separate'
+      value: '[Ss]eparate (project|test project|from ordinary)|projects (must be |remain |are )?separate|ViewModel/unit test project|ordinary (\.NET )?(unit )?test project'
     - type: regex
       value: 'AutomationId|tap|running app'
     - type: llm-rubric

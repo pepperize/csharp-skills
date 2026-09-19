@@ -34,6 +34,9 @@ description: Applies .NET logging safety and exception-boundary rules. Use when 
   safe for the configured sink. Structured logging does not redact values automatically.
 - When policy permits logging untrusted text, neutralize CR, LF, other control characters, and
   sink-specific delimiters, and enforce a maximum length at the final logging boundary.
+- Preserve exact project-supplied safety conditions, including named delimiters and numeric length
+  limits, in both recommendations and code. Do not replace them with a generic `safe...` value or
+  hypothetical sanitizer. When the project says no approved mechanism exists, omit the value.
 - Do not copy `Exception.Message`, response bodies, or stack traces into message-template
   arguments. Pass the exception through the `ILogger` exception overload only when the sink is
   authorized to retain its details; otherwise log a safe exception type or error code with a

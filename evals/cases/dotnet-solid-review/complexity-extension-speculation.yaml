@@ -1,0 +1,50 @@
+- description: dotnet-solid-review:complexity-extension-speculation
+  prompts:
+    - review-code
+  vars:
+    skill: file://../dotnet-solid-review/SKILL.md
+    principles: file://../dotnet-solid-review/references/design-principles.md
+    task: |
+      Review this shipping change. New shipping kinds are added every month, and the same kind
+      switch now appears in Quote and EstimateDays. The plugin registry is unused; the only current
+      requirement is the two shown kinds. Treat avoidable complexity in the current design and
+      speculative scope with no current consumer as distinct consequences. Identify material issues
+      and the smallest correction.
+    code: |
+      public decimal Quote(Shipment shipment) => shipment.Kind switch
+      {
+          ShippingKind.Standard => 5m,
+          ShippingKind.Express => 12m,
+          _ => throw new ArgumentOutOfRangeException()
+      };
+
+      public int EstimateDays(Shipment shipment) => shipment.Kind switch
+      {
+          ShippingKind.Standard => 5,
+          ShippingKind.Express => 1,
+          _ => throw new ArgumentOutOfRangeException()
+      };
+
+      public interface IShippingPlugin<TOptions> { }
+      public sealed class ShippingPluginRegistry
+      {
+          public void DiscoverFromAssemblies(params Assembly[] assemblies) { }
+          public void RegisterFallback(int priority) { }
+      }
+  assert:
+    - type: regex
+      value: 'OCP|Open Closed Principle'
+    - type: regex
+      value: 'KISS|Keep it simple, stupid'
+    - type: regex
+      value: 'YAGNI|You Ain.t Gonna Need It'
+    - type: regex
+      value: '[Rr]epeat(ed)?.*switch|switch.*repeat(ed)?|monthly|new.*kind'
+    - type: regex
+      value: '[Rr]emove|delete|unused|plugin.*(unnecessary|speculative)'
+    - type: llm-rubric
+      value: 'Pass only if the review names OCP for the demonstrated recurring shipping-kind switches and recommends one focused current variation seam, while naming KISS and YAGNI for the unused generic discovery/priority plugin machinery and removing it. It must not use OCP to justify the speculative plugin system or list unrelated principles.'
+  metadata:
+    id: dotnet-solid-review:complexity-extension-speculation
+    skill: dotnet-solid-review
+    kind: review

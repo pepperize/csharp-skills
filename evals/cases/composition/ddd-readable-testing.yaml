@@ -19,10 +19,12 @@
       value: 'Secondary skills:.*`csharp-readable-code`'
     - type: regex
       value: 'Secondary skills:.*`dotnet-testing`'
+    - type: regex
+      value: 'Secondary skills:.*`dotnet-solid-review`'
     - type: not-regex
       value: 'Secondary skills:.*`(dotnet-clean-architecture|dotnet-domain-clarification|dotnet-logging-exceptions|maui-)'
     - type: llm-rubric
-      value: 'Pass only if the explicitly activated dotnet-ddd-architecture skill is primary because the requested outcome is a DDD-governed boundary change. csharp-readable-code and dotnet-testing must be secondary for the changed task-returning C# API and requested tests; no unactivated or unrelated skill may be selected.'
+      value: 'Pass only if the explicitly activated dotnet-ddd-architecture skill is primary because the requested outcome is a DDD-governed boundary change. csharp-readable-code, dotnet-solid-review, and dotnet-testing must be secondary for the changed task-returning C# API, general design-principle reasoning, and requested tests; no unactivated or unrelated skill may be selected.'
   metadata:
     id: composition:ddd-readable-testing
     skill: skill-routing

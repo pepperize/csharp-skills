@@ -23,7 +23,7 @@
     - type: not-regex
       value: '(^|\n)\s*(public\s+)?(sealed\s+)?(class|interface)\s+\w*(UseCase|Port|Adapter)\b'
     - type: llm-rubric
-      value: 'Pass only if the answer says the skill is inactive because the main project instructions do not explicitly state Clean Architecture and avoids introducing use cases, ports, or adapters.'
+      value: 'Pass only if the answer says the skill is inactive because the main project instructions do not explicitly state Clean Architecture and does not recommend or implement the requested use cases, ports, or adapters. Referring to their names solely to reject the requested refactor is acceptable.'
   metadata:
     id: dotnet-clean-architecture:activation-guard-negative
     skill: dotnet-clean-architecture

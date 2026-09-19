@@ -13,7 +13,26 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SKILL_NAME = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 TARGET_PREFIXES = ("csharp-", "dotnet-", "maui-")
-EXPECTED_EVAL_CASES = 23
+EXPECTED_EVAL_CASES = 33
+DESIGN_PRINCIPLES = (
+    "DRY — Don’t Repeat Yourself",
+    "KISS — Keep it simple, stupid",
+    "FCoI — Favour Composition over Inheritance",
+    "IOSP — Integration Operation Segregation Principle",
+    "Single Level of Abstraction",
+    "SRP — Single Responsibility Principle",
+    "SoC — Separation of Concerns",
+    "ISP — Interface Segregation Principle",
+    "DIP — Dependency Inversion Principle",
+    "LSP — Liskov Substitution Principle",
+    "Principle of Least Astonishment",
+    "Information Hiding Principle",
+    "OCP — Open Closed Principle",
+    "Tell, Don't Ask",
+    "LoD — Law of Demeter",
+    "Implementation Reflects Design",
+    "YAGNI — You Ain’t Gonna Need It",
+)
 
 
 def skill_directories() -> tuple[Path, ...]:
@@ -140,6 +159,40 @@ class SkillStructureTests(unittest.TestCase):
             with self.subTest(skill=skill_dir.name):
                 text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
                 self.assertIsNone(forbidden.search(text))
+
+    def test_design_principle_reference_is_complete(self) -> None:
+        path = ROOT / "dotnet-solid-review" / "references" / "design-principles.md"
+        text = path.read_text(encoding="utf-8")
+
+        headings = tuple(re.findall(r"^### (.+)$", text, re.MULTILINE))
+        self.assertEqual(DESIGN_PRINCIPLES, headings)
+
+        for index, principle in enumerate(DESIGN_PRINCIPLES):
+            with self.subTest(principle=principle):
+                start = text.index(f"### {principle}")
+                end = (
+                    text.index(f"### {DESIGN_PRINCIPLES[index + 1]}")
+                    if index + 1 < len(DESIGN_PRINCIPLES)
+                    else text.index("## Relationships and Trade-offs")
+                )
+                section = text[start:end]
+                for field in (
+                    "**Intent:**",
+                    "**Review signals:**",
+                    "**Typical violation:**",
+                    "**Do not apply mechanically:**",
+                    "**Negative example**",
+                    "**Positive example**",
+                ):
+                    self.assertIn(field, section)
+                self.assertEqual(2, section.count("```csharp"))
+
+        review_skill = (ROOT / "dotnet-solid-review" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("references/design-principles.md", review_skill)
+        self.assertIn("explicit code/architecture/design", review_skill)
+        self.assertIn("self-review", review_skill)
 
 
 class InstallerTests(unittest.TestCase):
@@ -276,7 +329,7 @@ class EvalHarnessTests(unittest.TestCase):
                 ids.add(metadata_id.group(1))
                 self.assertIn(
                     metadata_kind.group(1),
-                    {"apply", "compose", "review", "route"},
+                    {"apply", "compose", "review", "route", "self-review"},
                 )
 
                 skill_name = skill_fields[-1]
@@ -305,6 +358,23 @@ class EvalHarnessTests(unittest.TestCase):
         self.assertIn("Choose exactly one primary skill", compose_prompt)
         self.assertIn("every applicable secondary skill", compose_prompt)
         self.assertIn("Secondary skills:", compose_prompt)
+
+    def test_review_prompts_support_principles_and_self_review(self) -> None:
+        prompt_root = ROOT / "evals" / "prompts"
+        review_prompt = (prompt_root / "review-code.md").read_text(encoding="utf-8")
+        self_review_prompt = (prompt_root / "self-review-code.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("{{ principles }}", review_prompt)
+        self.assertIn("{{ project_instructions }}", review_prompt)
+        self.assertIn("Name an applicable principle canonically", review_prompt)
+        self.assertIn("{{ principles }}", self_review_prompt)
+        self.assertIn("final self-review", self_review_prompt)
+
+        for config_name in ("promptfooconfig.yaml", "promptfooconfig.api.yaml"):
+            config_text = (ROOT / "evals" / config_name).read_text(encoding="utf-8")
+            self.assertIn("file://prompts/self-review-code.md", config_text)
 
     def test_ci_runs_deterministic_suite(self) -> None:
         workflow = (ROOT / ".github" / "workflows" / "validate.yml").read_text(

@@ -1,0 +1,37 @@
+- description: dotnet-solid-review:abstraction-and-integration
+  prompts:
+    - review-code
+  vars:
+    skill: file://../dotnet-solid-review/SKILL.md
+    principles: file://../dotnet-solid-review/references/design-principles.md
+    task: |
+      Review the method’s abstraction and testability. The late-fee calculation is business policy;
+      loading and saving coordinate project-owned collaborators. Name only relevant principles.
+    code: |
+      public async Task CloseOrderAsync(Guid id)
+      {
+          var order = await repository.GetAsync(id);
+          var fee = order.DaysLate > 5
+              ? decimal.Round(order.Total * 0.10m, 2)
+              : 0m;
+          order.Close(fee);
+          var json = JsonSerializer.Serialize(order);
+          using var content = new StringContent(json, Encoding.UTF8, "application/json");
+          await auditClient.PostAsync("/closed-orders", content);
+          await repository.SaveAsync(order);
+      }
+  assert:
+    - type: icontains
+      value: 'Single Level of Abstraction'
+    - type: regex
+      value: 'IOSP|Integration Operation Segregation Principle'
+    - type: regex
+      value: '[Ff]ee.*(extract|operation|policy|test)|[Ee]xtract.*fee'
+    - type: regex
+      value: '[Ss]erializ|transport|audit.*adapter'
+    - type: llm-rubric
+      value: 'Pass only if the review names Single Level of Abstraction for mixing the close workflow with lower-level implementation detail such as HTTP serialization, and IOSP for interleaving project-call coordination with the fee decision/calculation logic. It should isolate both the fee operation and transport detail with the smallest useful methods or collaborator, without demanding one class per line.'
+  metadata:
+    id: dotnet-solid-review:abstraction-and-integration
+    skill: dotnet-solid-review
+    kind: review

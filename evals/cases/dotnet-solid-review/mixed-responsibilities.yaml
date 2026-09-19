@@ -3,6 +3,7 @@
     - review-code
   vars:
     skill: file://../dotnet-solid-review/SKILL.md
+    principles: file://../dotnet-solid-review/references/design-principles.md
     task: |
       Review the production design for concrete responsibility and SOLID risks.
       Preserve externally visible behavior and recommend the smallest practical refactor.
@@ -28,7 +29,9 @@
       }
   assert:
     - type: regex
-      value: '[Mm]ix|multiple|more than one|responsibil'
+      value: 'SRP|Single Responsibility Principle'
+    - type: regex
+      value: '[Mm]ix|multiple|more than one|responsibil|concerns at once|owns three|owns persistence|same member'
     - type: regex
       value: '[Qq]uer(y|ying)|persistence|database'
     - type: regex
@@ -38,7 +41,7 @@
     - type: regex
       value: '[Ee]xtract|collaborator|split'
     - type: regex
-      value: '[Ff]ocused test|characterization|unit test|test.*behavior'
+      value: '[Ff]ocused (test|coverage)|characterization|unit test|test.*behavior'
     - type: llm-rubric
       value: 'Pass only if the review identifies the real change and testability risk from mixing query/persistence, CSV transformation, and HTTP delivery, then recommends a small behavior-preserving extraction or vertical refactor with focused test impact. It must treat SOLID as a heuristic, avoid a wholesale architecture rewrite, and avoid adding an interface for every class merely to satisfy a principle.'
   metadata:

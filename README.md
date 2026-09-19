@@ -13,7 +13,8 @@ and .NET MAUI codebases.
 
 ### .NET
 
-- `dotnet-solid-review`: pragmatic SOLID, responsibility, code-smell, and refactoring review.
+- `dotnet-solid-review`: contextual software-design principles for implementation, self-review,
+  explicit review, and pragmatic refactoring.
 - `dotnet-testing`: ordinary unit and integration test conventions, test data, framework reuse,
   and verification scope.
 - `dotnet-logging-exceptions`: logging safety, log placement, exception origins, and catch
@@ -89,10 +90,10 @@ Run the deterministic repository validation with:
 python -B -m unittest discover -s tests -v
 ```
 
-Behavioral Promptfoo evals cover skill routing, architecture activation guards, and the
-highest-risk semantic preferences. See [evals/README.md](evals/README.md) for authenticated Codex
-and API-based commands. Model-backed evals remain separate from ordinary CI because they require
-authentication and incur model usage.
+Behavioral Promptfoo evals cover skill routing, architecture activation guards, software-design
+principle detection and restraint, and the highest-risk semantic preferences. See
+[evals/README.md](evals/README.md) for authenticated Codex and API-based commands. Model-backed
+evals remain separate from ordinary CI because they require authentication and incur model usage.
 
 ## License
 

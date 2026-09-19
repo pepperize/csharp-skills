@@ -5,7 +5,8 @@
     skill: file://../csharp-readable-code/SKILL.md
     task: |
       Review the project-owned static methods and the external static call. Recommend corrections
-      consistent with the skill and explain which static call may remain direct.
+      consistent with the skill, explain the effect on ordinary mocking and London-style isolation,
+      and explain which static call may remain direct.
     code: |
       public static class InvoiceHelpers
       {

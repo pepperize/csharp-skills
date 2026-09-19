@@ -1,0 +1,44 @@
+- description: dotnet-solid-review:tradeoff-restraint
+  prompts:
+    - review-code
+  vars:
+    skill: file://../dotnet-solid-review/SKILL.md
+    principles: file://../dotnet-solid-review/references/design-principles.md
+    task: |
+      Assess whether any suggested redesign is justified. Requirements say the two reference
+      formats are unrelated and may diverge; MoneyRounder is a stable pure local concrete class;
+      every Shape subtype must provide Area and does so; Shipping has exactly two stable modes and
+      no planned third mode. Keep the review concise and do not invent violations.
+    code: |
+      string FormatCustomerReference(CustomerId id) => $"C-{id.Value}";
+      string FormatCouponCode(Coupon coupon) => $"C-{coupon.Code}";
+
+      sealed class MoneyRounder
+      {
+          public decimal Round(decimal value) => decimal.Round(value, 2);
+      }
+
+      abstract class Shape { public abstract decimal Area(); }
+      sealed class Rectangle(decimal width, decimal height) : Shape
+      {
+          public override decimal Area() => width * height;
+      }
+
+      decimal ShippingFee(bool express) => express ? 12m : 5m;
+  assert:
+    - type: regex
+      value: '[Nn]o relevant.*violation|[Nn]o material.*finding|[Nn]o design.*issue|complies'
+    - type: not-regex
+      value: 'DRY[^\n]*(violation|breach)|([Ss]hould|[Rr]ecommend|[Mm]ust|[Nn]eed to) (extract|create).{0,40}(shared|common).{0,40}(format|prefix)'
+    - type: not-regex
+      value: '([Ss]hould|[Rr]ecommend|[Mm]ust|[Nn]eed to) (introduce|add|create|inject).{0,40}(IMoneyRounder|MoneyRounder interface)'
+    - type: not-regex
+      value: 'Shape[^\n]*(LSP|FCoI).*(violation|breach)|([Ss]hould|[Rr]ecommend|[Mm]ust|[Nn]eed to) (replace|change).{0,40}(Shape|inheritance).{0,40}composition'
+    - type: not-regex
+      value: '([Ss]hould|[Rr]ecommend|[Mm]ust|[Nn]eed to) (introduce|add|create|use).{0,40}(shipping (strategy|plugin)|IShipping)'
+    - type: llm-rubric
+      value: 'Pass only if the review finds no material principle violation: it must not merge the unrelated similar formatters under DRY, wrap the stable concrete MoneyRounder in an interface under DIP, reject the substitutable Shape hierarchy under FCoI/LSP, or add a shipping strategy/plugin under OCP. It should use KISS/YAGNI reasoning to preserve the simple design and remain concise rather than reciting the catalog.'
+  metadata:
+    id: dotnet-solid-review:tradeoff-restraint
+    skill: dotnet-solid-review
+    kind: review
